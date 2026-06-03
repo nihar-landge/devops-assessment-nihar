@@ -29,6 +29,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "cloudmaven-secure-k8s"
 
+  oidc_issuer_enabled = true
+
   default_node_pool {
     name           = "agentpool"
     node_count     = var.node_count  
