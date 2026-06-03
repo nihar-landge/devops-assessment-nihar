@@ -15,7 +15,6 @@ permissions:
 jobs:
 
   CI-Validation:
-    
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
@@ -51,6 +50,3 @@ jobs:
     uses: clouddrove/github-shared-workflows/.github/workflows/docker-scanner.yml@master
     with:
       severity: 'CRITICAL,HIGH'
-      path: './app'
-      exit-code: 0
-      
