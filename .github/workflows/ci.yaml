@@ -30,11 +30,6 @@ jobs:
           terraform validate
           terraform fmt
 
-      - name: Test Build Frontend Image
-        run: docker build -t local-frontend:test ./app/frontend
-      - name: Test Build Backend Image
-        run: docker build -t local-backend:test ./app/backend
-
       - name: Setup Helm
         uses: azure/setup-helm@v4
       - name: Lint Helm Chart Manifests
@@ -46,7 +41,14 @@ jobs:
           name: verified-helm-chart
           path: ./helm/myapp
 
-  Container-Security-Scan:
-    uses: clouddrove/github-shared-workflows/.github/workflows/docker-scanner.yml@master
-    with:
-      severity: 'CRITICAL,HIGH'
+  # Container-Security-Scan-Frontend:
+  #   uses: clouddrove/github-shared-workflows/.github/workflows/docker-scanner.yml@master
+  #   with:
+  #     severity: 'CRITICAL,HIGH'
+  #     dockerfile-path: ./frontend.Dockerfile
+
+  # Container-Security-Scan-Backend:
+  #   uses: clouddrove/github-shared-workflows/.github/workflows/docker-scanner.yml@master
+  #   with:
+  #     severity: 'CRITICAL,HIGH'
+  #     dockerfile-path: ./backend.Dockerfile

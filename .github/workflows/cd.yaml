@@ -4,6 +4,10 @@ on:
   push:
     branches: [ master ]
 
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   id-token: write
@@ -30,7 +34,7 @@ jobs:
         run: |
           cd terraform
           terraform init
-          terraform apply -auto-approve
+          terraform apply -auto-approve -lock-timeout=10m
 
       - name: Connect to AKS Cluster
         uses: azure/aks-set-context@v4
@@ -46,8 +50,8 @@ jobs:
           
       - name: Build & Push Microservices
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/local-frontend:latest ./app/frontend
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/local-backend:latest ./app/backend
+          docker build -f ./app/frontend/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/local-frontend:latest ./app/frontend
+          docker build -f ./app/backend/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/local-backend:latest ./app/backend
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/local-frontend:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/local-backend:latest
 
