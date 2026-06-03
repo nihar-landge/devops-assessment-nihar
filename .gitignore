@@ -1,0 +1,17 @@
+node_modules/
+jspm_packages/
+
+
+.env
+
+
+.terraform/
+
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+
+*.tfvars
+*.tfvars.json
+
+.DS_Store

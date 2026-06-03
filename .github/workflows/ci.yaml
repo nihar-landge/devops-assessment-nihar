@@ -1,0 +1,51 @@
+name: Continuous Integration (CI)
+
+on:
+  on_push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+jobs:
+
+  CI-Validation:
+    
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Check Terraform Format & Validation
+        run: |
+          cd terraform
+          terraform init -backend=false
+          terraform validate
+          terraform fmt
+
+      - name: Test Build Frontend Image
+        run: docker build -t local-frontend:test ./app/frontend
+      - name: Test Build Backend Image
+        run: docker build -t local-backend:test ./app/backend
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+      - name: Lint Helm Chart Manifests
+        run: helm lint ./helm/myapp
+
+      - name: Save Manifests as Pipeline Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-helm-chart
+          path: ./helm/myapp
+
+  Container-Security-Scan:
+    uses: clouddrove/github-shared-workflows/.github/workflows/docker-scanner.yml@master
+    with:
+      path: './app'
+      exit-code: 0

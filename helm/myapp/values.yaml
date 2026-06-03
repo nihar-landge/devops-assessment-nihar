@@ -1,0 +1,41 @@
+environment: development
+
+backend:
+  replicaCount: 2
+  image:
+    #repository: local-backend
+    repository: niharlandge/local-backend
+    tag: latest
+    pullPolicy: Always
+  service:
+    port: 5000
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+
+frontend:
+  replicaCount: 2
+  image:
+    #repository: local-frontend
+    repository: niharlandge/local-frontend
+    tag: latest
+    pullPolicy: Always
+  service:
+    port: 3000
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+hpa:
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
