@@ -46,7 +46,15 @@ jobs:
           name: verified-helm-chart
           path: ./helm/myapp
 
-  Container-Security-Scan:
+  Container-Security-Scan-Backend:
     uses: clouddrove/github-shared-workflows/.github/workflows/docker-scanner.yml@master
     with:
       severity: 'CRITICAL,HIGH'
+      dockerfile: './app/backend/Dockerfile'
+
+  Container-Security-Scan-Frontend:
+    uses: clouddrove/github-shared-workflows/.github/workflows/docker-scanner.yml@master
+    with:
+      severity: 'CRITICAL,HIGH'
+      dockerfile: './app/frontend/Dockerfile'
+    
