@@ -50,5 +50,7 @@ jobs:
   Container-Security-Scan:
     uses: clouddrove/github-shared-workflows/.github/workflows/docker-scanner.yml@master
     with:
+      severity: 'CRITICAL,HIGH'
       path: './app'
       exit-code: 0
+      
