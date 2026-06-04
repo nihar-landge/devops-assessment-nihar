@@ -84,11 +84,11 @@ devops-assessment-niharlandge/
 az account set --subscription "YOUR_STUDENT_SUBSCRIPTION_ID"
 
 # Create resource group for backend state storage
-az group create --name rg-devops-assessment --location centralindia
+az group create --name rg-terraform-state-mgmt --location centralindia
 
 # Create storage account and container for remote backend
 az storage account create --name stdevopsassessmentstate \
-  --resource-group rg-devops-assessment --location centralindia \
+  --resource-group rg-terraform-state-mgmt --location centralindia \
   --sku Standard_LRS
 az storage container create --name tfstate \
   --account-name stdevopsassessmentstate
