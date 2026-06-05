@@ -63,6 +63,15 @@ jobs:
             --set controller.service.externalTrafficPolicy=Local \
             --atomic
   
+      - name: Install Monitoring Stack (Prometheus & Grafana)
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+            --namespace monitoring --create-namespace \
+            -f ./helm/monitoring-values.yaml \
+            --atomic --wait --timeout 15m
+
       - name: Deploy Application via Helm
         run: |
           helm upgrade --install cloudmaven-app ./helm/myapp \
