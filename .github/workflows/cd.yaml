@@ -42,6 +42,42 @@ jobs:
           resource-group: 'rg-cloudmaven-secure'
           cluster-name: 'aks-cloudmaven-cluster'
 
+      - name: Add Helm Repos
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add elastic https://helm.elastic.co
+          helm repo add fluent https://fluent.github.io/helm-charts
+          helm repo update
+
+      - name: Deploy Prometheus + Grafana
+        run: |
+          helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+            --namespace monitoring --create-namespace \
+            --set grafana.adminPassword=CloudMaven2026! \
+            --set alertmanager.enabled=false \
+            --wait --timeout 5m
+
+      - name: Deploy Elasticsearch
+        run: |
+          helm upgrade --install elasticsearch elastic/elasticsearch \
+            --namespace logging --create-namespace \
+            --set replicas=1 \
+            --set minimumMasterNodes=1 \
+            --wait --timeout 8m
+
+      - name: Deploy Kibana
+        run: |
+          helm upgrade --install kibana elastic/kibana \
+            --namespace logging \
+            --set elasticsearchHosts=http://elasticsearch-master:9200 \
+            --wait --timeout 5m
+
+      - name: Deploy FluentBit
+        run: |
+          helm upgrade --install fluent-bit fluent/fluent-bit \
+            --namespace logging \
+            --wait --timeout 3m
+
       - name: Log into Docker Hub
         uses: docker/login-action@v3
         with:
@@ -62,6 +98,13 @@ jobs:
             --set backend.image.repository=${{ secrets.DOCKERHUB_USERNAME }}/local-backend \
             --set frontend.image.tag=latest \
             --set backend.image.tag=latest
+
+      - name: Show Access Info
+        run: |
+          INGRESS_IP=$(kubectl get svc -n ingress-basic ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          echo "Ingress IP: ${INGRESS_IP}"
+          echo "Add this to your hosts file: ${INGRESS_IP} cloudmaven-app.local"
+          echo "Then open: http://cloudmaven-app.local/"
 
       - name: Verify Workload Rollout Status
         run: |
