@@ -61,4 +61,4 @@ jobs:
             --set backend.image.repository=${{ secrets.DOCKERHUB_USERNAME }}/local-backend \
             --set frontend.image.tag=latest \
             --set backend.image.tag=latest \
-            --wait --timeout 5m
+            --wait --timeout 10m
