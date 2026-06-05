@@ -93,10 +93,6 @@ az storage account create --name stdevopsassessmentstate \
 az storage container create --name tfstate \
   --account-name stdevopsassessmentstate
 
-# Initialise, plan, and apply
-terraform init
-terraform plan
-terraform apply
 ```
 
 ---
