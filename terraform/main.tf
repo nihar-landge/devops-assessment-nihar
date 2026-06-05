@@ -33,9 +33,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name           = "agentpool"
-    node_count     = var.node_count  
-    vm_size        = var.aks_vm_size 
-    vnet_subnet_id = module.custom_network.aks_subnet_id 
+    node_count     = var.node_count
+    vm_size        = var.aks_vm_size
+    vnet_subnet_id = module.custom_network.aks_subnet_id
     type           = "VirtualMachineScaleSets"
   }
 
@@ -47,8 +47,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
 
-    service_cidr   = "172.16.0.0/16"    
-    dns_service_ip = "172.16.0.10"  
+    service_cidr   = "172.16.0.0/16"
+    dns_service_ip = "172.16.0.10"
   }
   tags = module.clouddrove_labels.tags
 }
@@ -59,7 +59,7 @@ resource "azurerm_storage_account" "storage" {
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  
+
 
   public_network_access_enabled = false
   tags                          = module.clouddrove_labels.tags

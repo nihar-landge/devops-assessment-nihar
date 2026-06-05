@@ -7,9 +7,9 @@ output "aks_subnet_id" {
 }
 
 output "endpoint_subnet_id" {
-  value  = azurerm_subnet.endpoints.id
+  value = azurerm_subnet.endpoints.id
 }
 
 output "jumpbox_public_ip" {
-  value  = azurerm_public_ip.jumpbox_ip.ip_address
+  value = azurerm_public_ip.jumpbox_ip.ip_address
 }
