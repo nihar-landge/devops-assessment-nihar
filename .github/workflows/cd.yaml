@@ -54,11 +54,21 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/local-frontend:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/local-backend:latest
 
+      - name: Install NGINX Ingress Controller
+        run: |
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+          helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+            --namespace ingress-basic --create-namespace \
+            --set controller.service.externalTrafficPolicy=Local \
+            --atomic
+  
       - name: Deploy Application via Helm
         run: |
           helm upgrade --install cloudmaven-app ./helm/myapp \
+            --namespace core-apps --create-namespace \
             --set frontend.image.repository=${{ secrets.DOCKERHUB_USERNAME }}/local-frontend \
             --set backend.image.repository=${{ secrets.DOCKERHUB_USERNAME }}/local-backend \
             --set frontend.image.tag=latest \
             --set backend.image.tag=latest \
-            --wait --timeout 10m
+            --wait --timeout 5m
