@@ -1,0 +1,17 @@
+# helm/monitoring-values.yaml
+grafana:
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+  adminPassword: admin
+
+prometheus:
+  prometheusSpec:
+    retention: 1d
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
