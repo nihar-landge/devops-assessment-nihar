@@ -28,7 +28,7 @@ jobs:
           cd terraform
           terraform init -backend=false
           terraform validate
-          terraform fmt
+          terraform fmt -Check
 
       - name: Setup Helm
         uses: azure/setup-helm@v4

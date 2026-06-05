@@ -42,13 +42,6 @@ jobs:
           resource-group: 'rg-cloudmaven-secure'
           cluster-name: 'aks-cloudmaven-cluster'
 
-      - name: Add Helm Repos
-        run: |
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo add elastic https://helm.elastic.co
-          helm repo add fluent https://fluent.github.io/helm-charts
-          helm repo update
-
       - name: Deploy Prometheus + Grafana
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -61,11 +54,6 @@ jobs:
             --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
             --wait --timeout 10m
 
-      - name: Deploy Monitoring Stack
-        run: |
-          helm upgrade --install monitoring-stack helm/monitoring-stack \
-            --namespace monitoring --create-namespace \
-            --wait --timeout 15m
 
       - name: Log into Docker Hub
         uses: docker/login-action@v3
