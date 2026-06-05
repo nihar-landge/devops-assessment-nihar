@@ -9,10 +9,10 @@ spec:
       template:
         spec:
           containers:
-            - name: worker
-              image: alpine:latest
-              command:
-                - /bin/sh
-                - -c
-                - "apk add --no-cache curl && curl -s http://backend-service:5000/health"
+          - name: ping-worker
+            image: busybox
+            command:
+            - /bin/sh
+            - -c
+            - "wget -qO- http://backend-service:5000/health"
           restartPolicy: OnFailure
