@@ -12,6 +12,6 @@ spec:
     matchNames:
       - core-apps
   endpoints:
-  - port: http
+  - port: http-metrics
     path: /metrics
     interval: 15s
