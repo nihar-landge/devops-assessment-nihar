@@ -195,24 +195,17 @@ git push origin main
 ## 🔍 6. Debugging Reference
 
 ```bash
-# SSH tunnel: local laptop → Jumpbox → Grafana
-ssh -L 8080:127.0.0.1:8080 azureuser@<JUMPBOX_IP>
+# Access Grafana UI (Private)
+kubectl port-forward svc/kube-prometheus-stack-grafana 8080:80 -n monitoring --address 0.0.0.0
 
-# Self-healing port-forward loop on Jumpbox
-while true; do
-  kubectl port-forward svc/prometheus-grafana 8080:80 \
-    -n monitoring --address 0.0.0.0
-  sleep 1
-done
+# Access via Local Laptop Browser (SSH Tunnel)
+ssh -L 8080:localhost:8080 azureuser@<JUMPBOX_IP>
 
-# Test metrics endpoint from inside pod (Alpine has no curl)
-kubectl exec -n core-apps deployment/backend-deployment \
-  -- wget -qO- http://localhost:5000/metrics
-
-# Stream NGINX Ingress logs live
-kubectl logs -n ingress-basic deployment/ingress-nginx-controller \
-  --tail=20 -f
+# Access Public App via Ingress
+EXTERNAL_IP=$(kubectl get svc -n ingress-basic ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+curl http://$EXTERNAL_IP/api/health
 ```
+
 
 ---
 
@@ -220,34 +213,12 @@ kubectl logs -n ingress-basic deployment/ingress-nginx-controller \
 
 | # | Issue | Resolution |
 |---|---|---|
-| 1 | Port 5000 conflict on macOS (AirPlay Receiver) | Remapped host port to `-p 5001:5000` |
-| 2 | Helm nil-pointer crash on stale boilerplate templates | Deleted old `deployment.yaml` + `service.yaml` |
-| 3 | Terraform output scoping error | Moved root outputs to `terraform/outputs.tf` |
-| 4 | AzureRM provider missing `features {}` block | Added empty block + `terraform init -upgrade` |
-| 5 | Resource group 409 deletion race condition | Renamed group to `rg-cloudmaven-secure` |
-| 6 | `SkuNotAvailable` for Jumpbox in CentralIndia | Switched to `Standard_B1as_v2` |
-| 7 | AKS service CIDR overlapping VNet address space | Set `service_cidr = "172.16.0.0/16"` |
-| 8 | Deprecated `docker_bridge_cidr` Terraform field | Removed the field entirely |
-| 9 | AKS vCPU quota zero for D-series (student sub) | Hardcoded `vm_size = "Standard_B2s"` |
-| 10 | `kubectl` apt repo 404 (Google repo deprecated) | Migrated to `pkgs.k8s.io` |
-| 11 | `latest` tag cache causing `ImagePullBackOff` | Set `pullPolicy: Always` + `kubectl rollout restart` |
-| 12 | Ingress controller not found in cluster | Installed via Helm into `ingress-basic` namespace |
-| 13 | ClusterIP unreachable from Jumpbox | Used `kubectl exec` to test from inside pod |
-| 14 | `/api` path returning 404 | Added NGINX rewrite annotation + regex path matching |
-| 15 | `curl` not available in Alpine container | Used `wget -qO-` instead |
-| 16 | Grafana port-forward collapsing (OOM pod restart) | Increased memory limit to 512Mi · added healing loop |
-| 17 | Prometheus metrics chart flat (static counter) | Made request counter dynamic in `server.js` |
-| 18 | GitHub Actions `on_push:` YAML syntax error | Corrected to `push:` under `on:` block |
-
----
-
-## 🚀 Improvements Roadmap
-
-- [ ] Finalise Grafana dashboards + add screenshots
-- [ ] Finalise Kibana / EFK dashboards + add screenshots
-- [ ] Replace `latest` image tag with Git commit SHA
-- [ ] Adopt GitOps workflow with **ArgoCD**
-- [ ] Migrate secrets to **Azure Key Vault**
+| 1 | **Insufficient CPU** for Monitoring Stack | Optimized resource requests and uninstalled unused logging components on a single-node cluster. |
+| 2 | **Helm Operation Lock** | Manually deleted pending Helm Secrets and used `helm rollback` to clear stale locks. |
+| 3 | **Ingress path 404/Incorrect Routing** | Implemented NGINX `rewrite-target: /$2` and regex capturing groups in `ingress.yaml`. |
+| 4 | **No Metrics in Grafana** | Added `ServiceMonitor` with matching port names (`http-metrics`) to enable Prometheus discovery. |
+| 5 | **Terraform FMT Check Failure** | Identified incorrect indentation in `outputs.tf` via local `terraform fmt`. |
+| 6 | AKS service CIDR overlapping VNet address space | Set `service_cidr = "172.16.0.0/16"` |
 
 ---
 
@@ -261,6 +232,6 @@ kubectl logs -n ingress-basic deployment/ingress-nginx-controller \
 | Dockerfiles | ✅ Complete |
 | GitHub Actions CI/CD Pipeline | ✅ Complete |
 | README.md | ✅ Complete |
-| Grafana Dashboard Screenshots | ⚠️ In Progress |
-| Kibana Dashboard Screenshots | ⚠️ In Progress |
+| Grafana Dashboard Screenshots | ✅ Complete |
+| Kibana Dashboard Screenshots | ⚠️ |
 ---
