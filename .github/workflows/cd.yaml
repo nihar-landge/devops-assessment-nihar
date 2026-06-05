@@ -70,7 +70,7 @@ jobs:
           helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
             --namespace monitoring --create-namespace \
             -f ./helm/monitoring-values.yaml \
-            --atomic --wait --timeout 15m
+            --atomic --wait --timeout 20m
 
       - name: Deploy Application via Helm
         run: |
