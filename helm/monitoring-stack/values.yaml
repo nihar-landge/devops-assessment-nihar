@@ -1,0 +1,28 @@
+# Prometheus + Grafana
+kubePrometheus:
+  enabled: true
+  
+kube-prometheus-stack:
+  namespace: monitoring
+  grafana:
+    adminPassword: CloudMaven2026!
+  alertmanager:
+    enabled: false
+
+# Elasticsearch
+elasticsearch:
+  enabled: true
+  namespace: logging
+  replicas: 1
+  minimumMasterNodes: 1
+
+# Kibana (depends on Elasticsearch)
+kibana:
+  enabled: true
+  namespace: logging
+  elasticsearchHosts: "http://elasticsearch-master:9200"
+
+# FluentBit
+fluentBit:
+  enabled: true
+  namespace: logging

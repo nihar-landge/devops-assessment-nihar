@@ -1,0 +1,27 @@
+apiVersion: v2
+name: monitoring-stack
+description: Complete monitoring and logging stack with Prometheus, Elasticsearch, and Kibana
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: kube-prometheus-stack
+    version: "57.0.0"
+    repository: "https://prometheus-community.github.io/helm-charts"
+    condition: kubePrometheus.enabled
+    
+  - name: elasticsearch
+    version: "8.10.0"
+    repository: "https://helm.elastic.co"
+    condition: elasticsearch.enabled
+    
+  - name: kibana
+    version: "8.10.0"
+    repository: "https://helm.elastic.co"
+    condition: kibana.enabled
+    
+  - name: fluent-bit
+    version: "0.20.0"
+    repository: "https://fluent.github.io/helm-charts"
+    condition: fluentBit.enabled
