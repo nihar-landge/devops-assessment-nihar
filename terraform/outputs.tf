@@ -7,5 +7,5 @@ output "aks_cluster_name" {
 }
 
 output "jumpbox_public_connect_ip" {
-  value       = module.custom_network.jumpbox_public_ip
+  value = module.custom_network.jumpbox_public_ip
 }
