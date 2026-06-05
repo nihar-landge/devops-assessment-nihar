@@ -75,5 +75,5 @@ jobs:
  
       - name: Smoke Test API
         run: |
-        EXTERNAL_IP=$(kubectl get svc -n ingress-basic ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-        curl --retry 5 --retry-connrefused http://$EXTERNAL_IP/api/health
+          EXTERNAL_IP=$(kubectl get svc -n ingress-basic ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          curl --retry 5 --retry-connrefused http://$EXTERNAL_IP/api/health
