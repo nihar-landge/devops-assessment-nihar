@@ -49,10 +49,17 @@ jobs:
           helm repo add fluent https://fluent.github.io/helm-charts
           helm repo update
 
-      - name: Update Helm Dependencies
+      - name: Deploy Prometheus + Grafana
         run: |
-          cd helm/monitoring-stack
-          helm dependency update
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+            --namespace monitoring --create-namespace \
+            --set grafana.adminPassword=CloudMaven2026! \
+            --set alertmanager.enabled=false \
+            --set prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues=false \
+            --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
+            --wait --timeout 10m
 
       - name: Deploy Monitoring Stack
         run: |
