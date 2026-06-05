@@ -15,6 +15,7 @@ grafana:
 prometheus:
   prometheusSpec:
     retention: 1d
+    serviceMonitorSelectorNilUsesHelmValues: false
     resources:
       requests:
         cpu: 100m
